@@ -2,8 +2,15 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const encrypt = require('mongoose-encryption');
+require('dotenv').config();
 
 const app = express();
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+
 mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -15,10 +22,6 @@ db.once('open', () => {
     console.info('database connected successfully');
 });
 
-app.set("view engine", "ejs");
-app.use(express.static("public"));
-app.use(bodyParser.urlencoded({ extended: true }));
-
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -29,6 +32,9 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 });
+
+const secret = process.env.SECRET;
+userSchema.plugin(encrypt, {secret: secret, encryptedFields: ['password'] });
 
 const User = new mongoose.model('user', userSchema);
 

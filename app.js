@@ -20,11 +20,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/userDB", {
+mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-mongoose.set('useCreateIndex', true);
+mongoose.set('useCreateIndex', true); 
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
